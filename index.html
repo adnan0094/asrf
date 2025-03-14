@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مواقيت الصلاة - مدينة الباب</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        .clock {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 20px;
+        }
+        .countdown {
+            font-size: 20px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #3498db;
+            color: #fff;
+        }
+        td {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>مواقيت الصلاة</h1>
+        <select id="citySelect" onchange="fetchPrayerTimes()">
+            <option value="Al-Bab" selected>الباب</option>
+            <option value="Aleppo">حلب</option>
+            <option value="Afrin">عفرين</option>
+            <option value="Azaz">أعزاز</option>
+            <option value="Hama">حماة</option>
+            <option value="Salamiyah">السلامية</option>
+            <option value="Masyaf">المصياف</option>
+            <option value="Suqaylabiyah">السقيلبية</option>
+        </select>
+        <div class="clock" id="digitalClock">الساعة الرقمية</div>
+        <div class="countdown" id="countdown">الوقت المتبقي للإفطار</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>الصلاة</th>
+                    <th>الوقت</th>
+                </tr>
+            </thead>
+            <tbody id="prayerTimes">
+                <tr><td>الفجر</td><td id="fajr">--:--</td></tr>
+                <tr><td>الشروق</td><td id="sunrise">--:--</td></tr>
+                <tr><td>الظهر</td><td id="dhuhr">--:--</td></tr>
+                <tr><td>العصر</td><td id="asr">--:--</td></tr>
+                <tr><td>المغرب</td><td id="maghrib">--:--</td></tr>
+                <tr><td>العشاء</td><td id="isha">--:--</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // تحديث الساعة الرقمية
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: true, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            document.getElementById('digitalClock').textContent = timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // جلب مواقيت الصلاة
+        function fetchPrayerTimes() {
+            const city = document.getElementById('citySelect').value;
+            const url = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Syria&method=2`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const timings = data.data.timings;
+                    document.getElementById('fajr').textContent = convertTo12Hour(timings.Fajr);
+                    document.getElementById('sunrise').textContent = convertTo12Hour(timings.Sunrise);
+                    document.getElementById('dhuhr').textContent = convertTo12Hour(timings.Dhuhr);
+                    document.getElementById('asr').textContent = convertTo12Hour(timings.Asr);
+                    document.getElementById('maghrib').textContent = convertTo12Hour(timings.Maghrib);
+                    document.getElementById('isha').textContent = convertTo12Hour(timings.Isha);
+
+                    updateCountdown(timings.Maghrib);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // تحويل الوقت إلى صيغة 12 ساعة
+        function convertTo12Hour(time) {
+            const [hours, minutes] = time.split(':');
+            let hour = parseInt(hours);
+            const period = hour >= 12 ? 'PM' : 'AM';
+            hour = hour % 12 || 12;
+            return `${hour.toString().padStart(2, '0')}:${minutes} ${period}`;
+        }
+
+        // تحديث المؤقت التنازلي لوقت المغرب
+        function updateCountdown(maghribTime) {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const [maghribHour, maghribMinute] = maghribTime.split(':');
+            let maghrib = new Date(`${today}T${maghribHour}:${maghribMinute}:00+03:00`);
+
+            if (now > maghrib) {
+                maghrib.setDate(maghrib.getDate() + 1); // إذا مر وقت المغرب، انتقل للغد
+            }
+
+            const countdownInterval = setInterval(() => {
+                const currentTime = new Date();
+                const timeDiff = maghrib - currentTime;
+
+                if (timeDiff <= 0) {
+                    document.getElementById('countdown').textContent = 'حان وقت الإفطار!';
+                    clearInterval(countdownInterval);
+                    return;
+                }
+
+                const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                document.getElementById('countdown').textContent = 
+                    `الوقت المتبقي للإفطار: ${hours} س، ${minutes} د، ${seconds} ث`;
+            }, 1000);
+        }
+
+        // جلب مواقيت الصلاة عند تحميل الصفحة
+        fetchPrayerTimes();
+    </script>
+</body>
+</html>
